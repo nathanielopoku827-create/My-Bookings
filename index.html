@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StayEase - Full Booking App</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif}
+body{background:#fcfcfd;color:#111}
+.navbar{display:flex;justify-content:space-between;align-items:center;padding:14px 5%;background:#fff;position:sticky;top:0;z-index:100;border-bottom:1px solid #eee}
+.logo{font-weight:800;font-size:20px;cursor:pointer}.logo span{color:#ff385c}
+.nav-links{display:flex;gap:10px}.nav-links a{text-decoration:none;color:#333;font-size:13px;font-weight:500;padding:8px 14px;border-radius:20px}.nav-links a.active,.nav-links a:hover{background:#111;color:#fff}
+.btn{padding:10px 18px;border-radius:30px;border:none;cursor:pointer;font-weight:600;font-size:13px}.btn-dark{background:#111;color:#fff}.btn-pink{background:#ff385c;color:#fff}.btn-light{background:#f3f4f6}
+.btn-google{background:#fff;border:1px solid #ddd;display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:11px;border-radius:10px;margin-top:10px;cursor:pointer;font-weight:600}
+.avatar{width:32px;height:32px;background:#ff385c;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700}
+.hero{text-align:center;padding:40px 5% 10px}.hero h1{font-size:42px;letter-spacing:-1.5px}.hero h1 span{color:#ff385c}.hero p{color:#666;margin:10px auto;max-width:500px;font-size:14px}
+.search-bar{max-width:900px;margin:20px auto;background:#fff;display:flex;align-items:center;border:1px solid #ddd;border-radius:16px;padding:8px;box-shadow:0 8px 24px rgba(0,0,0,.08);gap:8px}
+.s-item{flex:1;padding:8px 14px;border-right:1px solid #eee}.s-item label{font-size:10px;color:#888;font-weight:700;display:block}.s-item input{border:none;outline:none;width:100%;font-weight:600;font-size:13px;background:transparent}
+.search-btn{background:#ff385c;color:#fff;border:none;padding:12px 22px;border-radius:12px;cursor:pointer;font-weight:700}
+.filters{display:flex;gap:8px;justify-content:center;padding:14px;flex-wrap:wrap}.chip{padding:7px 14px;border:1px solid #ddd;border-radius:20px;font-size:12px;cursor:pointer;background:#fff}.chip.active{background:#111;color:#fff}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;padding:20px 5%}.card{background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,.06);cursor:pointer}.card img{width:100%;height:220px;object-fit:cover}.card-info{padding:14px}.badge{position:absolute;top:10px;left:10px;background:#fff;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700}.img-wrap{position:relative}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;z-index:200;align-items:center;justify-content:center;padding:16px}.modal.active{display:flex}
+.auth-box{max-width:400px;padding:28px;border-radius:20px;background:#fff;width:100%}.auth-box input{width:100%;padding:12px 14px;margin:8px 0;border:1px solid #ddd;border-radius:10px;outline:none}
+.error{color:#ff385c;font-size:12px;display:none;background:#fff0f0;padding:8px;border-radius:8px;margin:6px 0}
+.forgot-link{font-size:11px;color:#ff385c;cursor:pointer;text-align:right;display:block;font-weight:600}.auth-toggle{font-size:12px;color:#666;margin-top:12px;text-align:center}.auth-toggle span{color:#ff385c;cursor:pointer;font-weight:700}
+.divider{display:flex;align-items:center;gap:10px;margin:14px 0;font-size:11px;color:#888}.divider::before,.divider::after{content:'';flex:1;height:1px;background:#eee}
+.booking-box{background:#fff;width:100%;max-width:1000px;border-radius:20px;overflow:hidden;display:flex;max-height:92vh;position:relative}
+.b-left{flex:1.2;padding:22px;overflow-y:auto}.b-right{flex:1;background:#f9fafb;padding:22px;border-left:1px solid #eee;overflow-y:auto}
+.calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin:14px 0}.cal-day{padding:10px;text-align:center;border-radius:10px;cursor:pointer;font-size:12px;border:1px solid #eee}.cal-day.selected{background:#ff385c;color:#fff}.cal-day.disabled{color:#ccc;pointer-events:none}
+.pay-input{width:100%;padding:11px 12px;margin:6px 0;border:1px solid #ddd;border-radius:10px;outline:none;font-size:13px}.pay-row{display:flex;gap:10px}
+.card-preview{background:linear-gradient(135deg,#111,#444);color:#fff;padding:16px;border-radius:14px;margin:10px 0;font-size:13px;letter-spacing:1px}
+.step{display:none}.step.active{display:block}.progress{display:flex;gap:8px;margin:10px 0}.p-dot{flex:1;height:4px;background:#eee;border-radius:10px}.p-dot.active{background:#ff385c}
+.drawer{position:fixed;top:0;right:-300px;width:280px;height:100%;background:#fff;z-index:300;transition:.3s;padding:20px}.drawer.open{right:0}
+.section-view{display:none;padding:30px 5%}.section-view.active{display:block}
+.booking-item{background:#fff;border:1px solid #eee;border-radius:16px;padding:16px;margin-bottom:12px;display:flex;gap:14px;align-items:center}
+.booking-item img{width:90px;height:70px;border-radius:10px;object-fit:cover}
+.close{position:absolute;top:12px;right:12px;background:#fff;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.15);z-index:10}
+@media(max-width:900px){.grid{grid-template-columns:1fr 1fr}.search-bar{flex-direction:column}.nav-links{display:none}.booking-box{flex-direction:column}}
+</style>
+</head>
+<body>
+
+<header class="navbar">
+  <div class="logo" onclick="showSection('stays')">StayEase<span>.</span></div>
+  <div class="nav-links">
+    <a href="#" id="link-stays" class="active" onclick="showSection('stays');return false">Stays</a>
+    <a href="#" id="link-exp" onclick="showSection('experiences');return false">Experiences</a>
+    <a href="#" id="link-host" onclick="showSection('host');return false">Host</a>
+    <a href="#" id="link-bookings" onclick="showSection('bookings');return false">📅 My Bookings <span id="bookingCount" style="background:#ff385c;color:#fff;padding:2px 6px;border-radius:10px;font-size:10px;display:none">0</span></a>
+  </div>
+  <div style="display:flex;gap:10px;align-items:center" id="authArea"></div>
+  <span id="ham" style="font-size:20px;cursor:pointer">☰</span>
+</header>
+
+<div class="drawer" id="drawer"><div style="display:flex;justify-content:space-between"><b>Menu</b><span onclick="drawer.classList.remove('open')" style="cursor:pointer">✕</span></div><div style="margin-top:20px;display:flex;flex-direction:column;gap:12px"><a href="#" onclick="showSection('stays');drawer.classList.remove('open');return false">🏠 Stays</a><a href="#" onclick="showSection('experiences');drawer.classList.remove('open');return false">🌴 Experiences</a><a href="#" onclick="showSection('bookings');drawer.classList.remove('open');return false">📅 My Bookings</a><hr><div id="drawerAuth"></div></div></div>
+
+<div id="staysSection" class="section-view active">
+  <section class="hero"><h1>Find your next <span>stay</span></h1><p>Vacation homes, cabins, beach houses.</p>
+    <div class="search-bar"><div class="s-item"><label>WHERE</label><input id="where" placeholder="Bali, Indonesia"></div><div class="s-item"><label>CHECK-IN</label><input type="date"></div><div class="s-item"><label>CHECK-OUT</label><input type="date"></div><div class="s-item"><label>GUESTS</label><input placeholder="2 guests" style="border:none;outline:none;font-weight:600"></div><button class="search-btn" id="searchBtn">Search</button></div>
+  </section>
+  <div class="filters"><div class="chip active" data-f="all">All</div><div class="chip" data-f="beach">Beachfront</div><div class="chip" data-f="villa">Villas</div><div class="chip" data-f="cabin">Cabins</div><div class="chip" data-f="pool">Pools</div></div>
+  <div class="grid" id="grid"></div>
+</div>
+
+<div id="bookingsSection" class="section-view">
+  <h2 style="font-size:28px">📅 My Bookings</h2>
+  <p style="font-size:13px;color:#888;margin:8px 0 20px" id="bookingSub">Login to see your bookings</p>
+  <div id="bookingsList"></div>
+</div>
+
+<div id="expSection" class="section-view"><section class="hero"><h1>Unique <span>Experiences</span></h1><p>Hosted by locals.</p></section></div>
+<div id="hostSection" class="section-view"><section class="hero"><h1>Become a <span>Host</span></h1><p>Earn $2,500+ / month</p><button class="btn btn-pink" style="margin-top:16px;padding:14px 28px" onclick="openAuth(true)">Start Hosting</button></section></div>
+
+<div class="modal" id="authModal"><div class="auth-box">
+  <div style="display:flex;justify-content:space-between"><h2 id="authTitle">Welcome back</h2><span style="cursor:pointer" onclick="authModal.classList.remove('active')">✕</span></div>
+  <div class="error" id="authError"></div>
+  <div id="normalAuth"><input type="text" id="authName" placeholder="Full Name" style="display:none"><input type="email" id="authEmail" placeholder="Email"><input type="password" id="authPass" placeholder="Password"><span class="forgot-link" onclick="showForgot()">Forgot password?</span><button class="btn btn-dark" style="width:100%;margin-top:12px;padding:12px" id="authAction">Login</button><div class="divider">OR</div><button class="btn-google" id="googleBtn"><img src="https://www.svgrepo.com/show/475656/google-color.svg" width="18"> Continue with Google</button><div class="auth-toggle">Don't have account? <span id="toggleAuth">Sign up</span></div></div>
+  <div id="forgotAuth" style="display:none"><input type="email" id="forgotEmail" placeholder="Your email"><input type="password" id="forgotNewPass" placeholder="New password"><button class="btn btn-dark" style="width:100%;margin-top:10px;padding:12px" id="resetBtn">Reset Password</button><div class="auth-toggle"><span onclick="showNormal()">← Back</span></div></div>
+</div></div>
+
+<div class="modal" id="bookingModal"><div class="booking-box"><div class="close" onclick="bookingModal.classList.remove('active')">✕</div>
+  <div class="b-left">
+    <div class="progress"><div class="p-dot active" id="dot1"></div><div class="p-dot" id="dot2"></div></div>
+    <div class="step active" id="step1"><img id="mImg" style="width:100%;height:190px;object-fit:cover;border-radius:14px"><h3 id="mTitle" style="margin:12px 0 4px"></h3><p id="mLoc" style="font-size:12px;color:#888"></p><h4 style="margin:18px 0 8px;font-size:13px">Select Dates</h4><div class="calendar" id="calendar"></div><div style="display:flex;gap:10px"><input type="number" id="guestNum" value="2" min="1" style="flex:1;padding:10px;border:1px solid #ddd;border-radius:10px"><input type="text" id="promoCode" placeholder="SAVE20" style="flex:1;padding:10px;border:1px solid #ddd;border-radius:10px"></div><button class="btn btn-dark" style="width:100%;margin-top:14px;padding:12px" onclick="goToPayment()">Continue →</button></div>
+    <div class="step" id="step2"><h3>💳 Payment</h3><div class="card-preview" id="cardPreview">•••• •••• •••• ••••<br><span style="font-size:11px">MM/YY CVC</span></div><div class="error" id="payError"></div><input class="pay-input" id="cardName" placeholder="Cardholder Name"><input class="pay-input" id="cardNumber" placeholder="4242 4242 4242 4242" maxlength="19"><div class="pay-row"><input class="pay-input" id="cardExp" placeholder="MM/YY" maxlength="5"><input class="pay-input" id="cardCvc" placeholder="CVC" maxlength="4"></div><input class="pay-input" id="cardZip" placeholder="ZIP"><div style="display:flex;gap:10px;margin-top:12px"><button class="btn btn-light" style="flex:1;padding:12px" onclick="showStep(1)">← Back</button><button class="btn btn-pink" style="flex:1;padding:12px" id="payBtn">Pay Now</button></div><p style="font-size:10px;color:#888;text-align:center;margin-top:8px">Test: 4242 4242 4242 4242</p></div>
+    <div class="step" id="step3" style="text-align:center;padding:20px"><div style="font-size:50px">✅</div><h2>Booking Confirmed!</h2><p style="font-size:13px;color:#666" id="successText"></p><div style="background:#f9fafb;padding:14px;border-radius:12px;margin:14px 0;text-align:left;font-size:12px" id="receipt"></div><button class="btn btn-dark" style="width:100%;padding:12px" onclick="bookingModal.classList.remove('active');showStep(1);showSection('bookings');renderBookings()">View My Bookings</button></div>
+  </div>
+  <div class="b-right"><h4>Summary</h4><img id="sImg" style="width:100%;height:120px;object-fit:cover;border-radius:10px;margin:10px 0"><div style="display:flex;justify-content:space-between;font-size:13px;margin:6px 0"><span id="sTitle">Villa</span><span>★ 4.9</span></div><hr style="margin:10px 0;border:none;border-top:1px solid #eee"><div style="display:flex;justify-content:space-between;font-size:13px;margin:6px 0"><span>Price/night</span><span id="sPrice">$0</span></div><div style="display:flex;justify-content:space-between;font-size:13px;margin:6px 0"><span>Nights</span><span id="sNights">0</span></div><div style="display:flex;justify-content:space-between;font-size:13px;margin:6px 0"><span>Guests</span><span id="sGuests">2</span></div><div style="display:flex;justify-content:space-between;font-size:13px;margin:6px 0"><span>Cleaning</span><span>$30</span></div><div style="display:flex;justify-content:space-between;font-size:13px;margin:6px 0"><span>Service</span><span>$20</span></div><div style="display:flex;justify-content:space-between;font-size:13px;color:#16a34a;display:none" id="discountRow"><span>SAVE20</span><span id="discount">-$0</span></div><div style="display:flex;justify-content:space-between;font-weight:800;margin-top:10px;border-top:1px solid #ddd;padding-top:10px"><span>Total</span><span id="sTotal">$0</span></div></div>
+</div></div>
+
+<script>
+const stays=[
+{id:1,title:"Beachfront Villa with Private Pool",loc:"Bali, Indonesia",type:"beach",price:180,rating:4.9,img:"https://images.unsplash.com/photo-1571896349842-33c89424de2d"},
+{id:2,title:"Modern Cabin in the Woods",loc:"Aspen, USA",type:"cabin",price:220,rating:4.8,img:"https://images.unsplash.com/photo-1449824913935-59a10b8d2000"},
+{id:3,title:"Luxury Villa - Infinity Pool",loc:"Santorini, Greece",type:"villa",price:350,rating:5.0,img:"https://images.unsplash.com/photo-1613490493576-7fde63acd811"},
+{id:4,title:"Cozy Pool House",loc:"Maldives",type:"pool",price:290,rating:4.9,img:"https://images.unsplash.com/photo-1582719478250-c89cae4dc85b"},
+{id:5,title:"Ocean View Apartment",loc:"Miami, FL",type:"beach",price:150,rating:4.7,img:"https://images.unsplash.com/photo-1522708323590-d24dbb6b0267"},
+{id:6,title:"Mountain Lodge",loc:"Swiss Alps",type:"cabin",price:400,rating:4.9,img:"https://images.unsplash.com/photo-1518780664697-55e3ad937233"},
+];
+let activeFilter="all",selectedDates=[],currentStay=null,isLogin=true;
+let currentUser=JSON.parse(localStorage.getItem('stayUser')||'null');
+let users=JSON.parse(localStorage.getItem('stayUsers')||'[]');
+const authModal=document.getElementById('authModal'), bookingModal=document.getElementById('bookingModal');
+
+function updateAuthUI(){
+  const area=document.getElementById('authArea');
+  if(currentUser){
+    area.innerHTML=`<span style="font-size:13px">Hi, ${currentUser.name}</span><div class="avatar">${currentUser.name[0].toUpperCase()}</div><button class="btn btn-light" onclick="logout()">Logout</button>`;
+    document.getElementById('drawerAuth').innerHTML=`<b>${currentUser.name}</b><br><small>${currentUser.email}</small><br><br><button class="btn btn-light" onclick="logout()">Logout</button>`;
+  }else{
+    area.innerHTML=`<button class="btn btn-light" id="loginBtn">Login</button><button class="btn btn-dark" id="signupBtn">Sign up</button>`;
+    document.getElementById('loginBtn').onclick=()=>openAuth(true); document.getElementById('signupBtn').onclick=()=>openAuth(false);
+  }
+  renderBookings();
+}
+function openAuth(l){isLogin=l; showNormal(); document.getElementById('authTitle').textContent=isLogin?"Welcome back":"Create account"; document.getElementById('authAction').textContent=isLogin?"Login":"Sign up"; document.getElementById('authName').style.display=isLogin?"none":"block"; document.getElementById('toggleAuth').textContent=isLogin?"Sign up":"Login"; authModal.classList.add('active');}
+function showForgot(){document.getElementById('normalAuth').style.display="none";document.getElementById('forgotAuth').style.display="block";}
+function showNormal(){document.getElementById('normalAuth').style.display="block";document.getElementById('forgotAuth').style.display="none";}
+document.getElementById('toggleAuth').onclick=()=>openAuth(!isLogin);
+document.getElementById('authAction').onclick=()=>{
+  const name=document.getElementById('authName').value.trim(),email=document.getElementById('authEmail').value.trim().toLowerCase(),pass=document.getElementById('authPass').value,err=document.getElementById('authError');
+  if(!email||!pass||(!isLogin&&!name)){err.textContent="Fill all fields";err.style.display="block";return}
+  if(pass.length<6){err.textContent="6+ chars";err.style.display="block";return}
+  if(isLogin){const f=users.find(u=>u.email===email&&u.pass===pass);if(!f){err.textContent="Invalid";err.style.display="block";return} currentUser=f;}
+  else{if(users.find(u=>u.email===email)){err.textContent="Exists";err.style.display="block";return} const n={name,email,pass};users.push(n);currentUser=n;localStorage.setItem('stayUsers',JSON.stringify(users));}
+  localStorage.setItem('stayUser',JSON.stringify(currentUser));authModal.classList.remove('active');updateAuthUI();
+};
+document.getElementById('googleBtn').onclick=()=>{
+  const email=prompt("Enter Gmail:")||"user@gmail.com"; if(!email)return;
+  let f=users.find(u=>u.email===email.toLowerCase()); if(!f){f={name:email.split('@')[0],email:email.toLowerCase(),pass:"google"};users.push(f);localStorage.setItem('stayUsers',JSON.stringify(users));}
+  currentUser=f;localStorage.setItem('stayUser',JSON.stringify(currentUser));authModal.classList.remove('active');updateAuthUI();
+};
+document.getElementById('resetBtn').onclick=()=>{
+  const email=document.getElementById('forgotEmail').value.trim().toLowerCase(),np=document.getElementById('forgotNewPass').value;
+  const u=users.find(x=>x.email===email); if(!u){alert("Not found");return} if(np.length<6){alert("6+");return}
+  u.pass=np;localStorage.setItem('stayUsers',JSON.stringify(users));alert("Reset! Login now");showNormal();openAuth(true);
+};
+function logout(){localStorage.removeItem('stayUser');currentUser=null;updateAuthUI(); showSection('stays');}
+
+// BOOKINGS LIST
+function renderBookings(){
+  const listEl=document.getElementById('bookingsList');
+  const countEl=document.getElementById('bookingCount');
+  if(!currentUser){listEl.innerHTML=`<div style="background:#fff;padding:40px;border-radius:16px;text-align:center;border:1px solid #eee"><p>🔒 Please login to see bookings</p><button class="btn btn-dark" style="margin-top:12px" onclick="openAuth(true)">Login</button></div>`; document.getElementById('bookingSub').textContent="Login to see your bookings"; countEl.style.display="none"; return;}
+  let bookings=JSON.parse(localStorage.getItem('bookings')||'[]').filter(b=>b.user===currentUser.email);
+  document.getElementById('bookingSub').textContent=`${bookings.length} booking(s) • Total spent: $${bookings.reduce((s,b)=>s+parseInt(b.total.replace('$','')),0)}`;
+  if(bookings.length>0){countEl.textContent=bookings.length; countEl.style.display="inline";} else countEl.style.display="none";
+  if(bookings.length===0){listEl.innerHTML=`<div style="background:#fff;padding:40px;border-radius:16px;text-align:center;border:1px solid #eee"><div style="font-size:40px">🏖️</div><p>No bookings yet</p><p style="font-size:12px;color:#888">Start exploring stays</p><button class="btn btn-pink" style="margin-top:12px" onclick="showSection('stays')">Browse Stays</button></div>`; return;}
+  listEl.innerHTML=bookings.map((b,i)=>`
+    <div class="booking-item">
+      <img src="${b.img}">
+      <div style="flex:1"><b style="font-size:13px">${b.property}</b><div style="font-size:11px;color:#888">${b.dates} • ${b.guests} guests • ${b.date}</div><div style="font-size:11px">ID: ${b.id} • Card: ${b.card} • ${b.total}</div></div>
+      <div style="text-align:right"><div style="background:#dcfce7;color:#16a34a;padding:4px 8px;border-radius:20px;font-size:10px;font-weight:700;display:inline-block">CONFIRMED</div><br><button class="btn btn-light" style="margin-top:8px;padding:6px 12px;font-size:11px" onclick="cancelBooking(${i})">Cancel</button></div>
+    </div>
+  `).join('');
+}
+function cancelBooking(index){
+  if(!confirm("Cancel this booking? Refund will be issued.")) return;
+  let all=JSON.parse(localStorage.getItem('bookings')||'[]');
+  let userBookings=all.filter(b=>b.user===currentUser.email);
+  let toDelete=userBookings[index];
+  all=all.filter(b=>!(b.id===toDelete.id && b.user===currentUser.email));
+  localStorage.setItem('bookings',JSON.stringify(all));
+  renderBookings();
+}
+
+// STAYS GRID
+const grid=document.getElementById('grid');
+function render(list){grid.innerHTML="";list.forEach(s=>{
+  const d=document.createElement('div');d.className="card";
+  d.innerHTML=`<div class="img-wrap"><img src="${s.img}?w=600"><div class="badge">★ ${s.rating}</div></div><div class="card-info"><b style="font-size:13px">${s.title}</b><div style="font-size:12px;color:#888">${s.loc}</div><div><b>$${s.price}</b> / night</div></div>`;
+  d.onclick=()=>{if(!currentUser){openAuth(true);return} openBooking(s)};grid.appendChild(d);
+});}
+render(stays);
+document.querySelectorAll('.chip').forEach(ch=>{ch.onclick=()=>{document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));ch.classList.add('active');activeFilter=ch.dataset.f;filter();}});
+function filter(){const w=document.getElementById('where').value.toLowerCase();let list=stays.filter(s=>(activeFilter==="all"||s.type===activeFilter)&&(s.loc.toLowerCase().includes(w)||s.title.toLowerCase().includes(w)));render(list);}
+document.getElementById('searchBtn').onclick=filter; document.getElementById('where').addEventListener('input',filter);
+
+function buildCalendar(){const cal=document.getElementById('calendar');cal.innerHTML="";selectedDates=[];for(let i=1;i<=28;i++){const d=document.createElement('div');d.className="cal-day";if(i<6)d.classList.add('disabled');d.textContent=i;d.onclick=()=>{d.classList.toggle('selected');if(d.classList.contains('selected'))selectedDates.push(i);else selectedDates=selectedDates.filter(x=>x!==i);updateSummary();};cal.appendChild(d);}}
+function openBooking(s){currentStay=s;document.getElementById('mImg').src=s.img+"?w=600";document.getElementById('sImg').src=s.img+"?w=600";document.getElementById('mTitle').textContent=s.title;document.getElementById('sTitle').textContent=s.title.slice(0,20);document.getElementById('mLoc').textContent=s.loc;document.getElementById('sPrice').textContent="$"+s.price;bookingModal.classList.add('active');showStep(1);buildCalendar();updateSummary();}
+function updateSummary(){const nights=selectedDates.length||1, guests=document.getElementById('guestNum').value||2; document.getElementById('sNights').textContent=nights; document.getElementById('sGuests').textContent=guests; const promo=document.getElementById('promoCode').value.trim().toUpperCase(); let base=currentStay.price*nights+50; let discount=0; if(promo==="SAVE20"){discount=base*0.2; document.getElementById('discountRow').style.display="flex"; document.getElementById('discount').textContent="-$"+discount.toFixed(0);} else document.getElementById('discountRow').style.display="none"; document.getElementById('sTotal').textContent="$"+(base-discount).toFixed(0);}
+document.getElementById('guestNum').addEventListener('input',updateSummary); document.getElementById('promoCode').addEventListener('input',updateSummary);
+function showStep(n){document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));document.getElementById('step'+n).classList.add('active');document.getElementById('dot1').classList.toggle('active',n>=1);document.getElementById('dot2').classList.toggle('active',n>=2);}
+function goToPayment(){if(selectedDates.length===0){alert("Select date");return} showStep(2);}
+
+document.getElementById('cardNumber').addEventListener('input',e=>{
+  let v=e.target.value.replace(/\D/g,'').slice(0,16); let f=v.match(/.{1,4}/g); e.target.value=f?f.join(' '):v;
+  document.getElementById('cardPreview').innerHTML=`${e.target.value||'•••• •••• •••• ••••'}<br><span style="font-size:11px">${document.getElementById('cardExp').value||'MM/YY'} ${document.getElementById('cardCvc').value||''}</span>`;
+});
+document.getElementById('cardExp').addEventListener('input',e=>{let v=e.target.value.replace(/\D/g,''); if(v.length>=3) v=v.slice(0,2)+'/'+v.slice(2,4); e.target.value=v;});
+function luhnCheck(num){let sum=0,alt=false;for(let i=num.length-1;i>=0;i--){let n=parseInt(num[i]);if(alt){n*=2;if(n>9)n-=9}sum+=n;alt=!alt}return sum%10===0}
+document.getElementById('payBtn').onclick=()=>{
+  const name=document.getElementById('cardName').value.trim(), number=document.getElementById('cardNumber').value.replace(/\s/g,''), exp=document.getElementById('cardExp').value, cvc=document.getElementById('cardCvc').value, zip=document.getElementById('cardZip').value, err=document.getElementById('payError');
+  if(!name||!number||!exp||!cvc||!zip){err.textContent="Fill all fields";err.style.display="block";return}
+  if(number.length!==16||!luhnCheck(number)){err.textContent="Invalid card";err.style.display="block";return}
+  const btn=document.getElementById('payBtn'); btn.textContent="Processing..."; btn.disabled=true;
+  setTimeout(()=>{
+    btn.textContent="Pay Now"; btn.disabled=false;
+    const total=document.getElementById('sTotal').textContent;
+    document.getElementById('successText').textContent=`Confirmed for ${selectedDates.length||1} night(s)`;
+    document.getElementById('receipt').innerHTML=`Email: ${currentUser.email}<br>Property: ${currentStay.title}<br>Total: ${total}<br>ID: #${Math.floor(Math.random()*900000+100000)}`;
+    showStep(3);
+    let bookings=JSON.parse(localStorage.getItem('bookings')||'[]');
+    bookings.push({id:'#'+Math.floor(Math.random()*900000+100000), user:currentUser.email, property:currentStay.title, img:currentStay.img+"?w=200", total, dates:selectedDates.join(', '), guests:document.getElementById('guestNum').value, card:'**** '+number.slice(-4), date:new Date().toLocaleString()});
+    localStorage.setItem('bookings',JSON.stringify(bookings));
+    renderBookings();
+  },1200);
+};
+
+function showSection(name){
+  document.querySelectorAll('.section-view').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-links a').forEach(a=>a.classList.remove('active'));
+  document.getElementById(name+'Section').classList.add('active');
+  const link=document.getElementById('link-'+name); if(link) link.classList.add('active');
+  if(name==='bookings') renderBookings();
+}
+document.getElementById('ham').onclick=()=>document.getElementById('drawer').classList.add('open');
+authModal.addEventListener('click',e=>{if(e.target.id==='authModal')e.target.classList.remove('active')});
+bookingModal.addEventListener('click',e=>{if(e.target.id==='bookingModal')e.target.classList.remove('active')});
+updateAuthUI();
+renderBookings();
+</script>
+</body>
+</html>
